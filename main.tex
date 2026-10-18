@@ -1,0 +1,210 @@
+% Компилятор: pdfLaTeX, XeLaTeX или LuaLaTeX. Для ссылок нужны два прохода.
+% Для Times New Roman выберите XeLaTeX/LuaLaTeX и установите этот шрифт.
+\documentclass[a4paper,14pt]{extarticle}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T2A]{fontenc}
+  % Times-совместимый шрифт с кириллицей для pdfLaTeX.
+  \usepackage{tempora}
+  \PackageWarningNoLine{lab-template}{pdfLaTeX uses Tempora, not Times New Roman.
+    For Times New Roman select XeLaTeX or LuaLaTeX}
+\else
+  \usepackage{fontspec}
+  % Подключаем файлы напрямую: это исключает сбои поиска системных шрифтов.
+  % Файлы Times New Roman можно положить рядом с main.tex.
+  \IfFileExists{times.ttf}{%
+    \setmainfont{times.ttf}[BoldFont=timesbd.ttf,
+      ItalicFont=timesi.ttf,BoldItalicFont=timesbi.ttf]%
+  }{%
+    \setmainfont{Tempora-Regular.otf}[BoldFont=Tempora-Bold.otf,
+      ItalicFont=Tempora-Italic.otf,BoldItalicFont=Tempora-BoldItalic.otf]%
+    \PackageWarningNoLine{lab-template}{Times New Roman files are missing.
+      Tempora is used. Add times.ttf, timesbd.ttf, timesi.ttf and timesbi.ttf
+      for Times New Roman}%
+  }
+\fi
+% У extarticle опция 14pt задаёт 14.4pt; уточняем основной кегль до 14pt.
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize{14pt}{17pt}}
+\makeatother
+\normalsize
+\usepackage[russian]{babel}
+
+% false — поля и абзац по ГОСТ; true — параметры из приложенного DOCX.
+\newif\ifDepartmentStyle
+\DepartmentStylefalse
+% Для короткого отчёта можно отключить новую страницу перед разделом.
+\newif\ifNewSectionPage
+\NewSectionPagetrue
+
+% Шрифт выбирается выше в зависимости от компилятора и доступных гарнитур.
+\usepackage{geometry}
+\ifDepartmentStyle
+  \geometry{left=30mm,right=10mm,top=20mm,bottom=20mm,footskip=10mm}
+  \newcommand{\ParagraphIndent}{10mm}
+\else
+  \geometry{left=30mm,right=15mm,top=20mm,bottom=20mm,footskip=10mm}
+  \newcommand{\ParagraphIndent}{12.5mm}
+\fi
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{\ParagraphIndent}
+\setlength{\parskip}{0pt}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{array,tabularx}
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{gostdash}{\space—\space}
+\DeclareCaptionLabelSeparator{departmentdot}{.\space}
+\captionsetup{font=normalsize,labelsep=gostdash}
+\captionsetup[figure]{name=Рисунок,position=bottom,justification=centering}
+\captionsetup[table]{name=Таблица,position=top,justification=raggedright,singlelinecheck=false}
+\ifDepartmentStyle
+  \captionsetup[table]{labelsep=departmentdot}
+\fi
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\bfseries\hyphenpenalty=10000}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\bfseries\hyphenpenalty=10000}{\thesubsection}{1em}{}
+\titlespacing*{\section}{\ParagraphIndent}{0pt}{\baselineskip}
+\titlespacing*{\subsection}{\ParagraphIndent}{\baselineskip}{\baselineskip}
+\usepackage{enumitem}
+\setlist[itemize]{label=—,leftmargin=\ParagraphIndent,itemindent=0pt,nosep}
+\setlist[enumerate]{label=\arabic*),leftmargin=\ParagraphIndent,nosep}
+\usepackage[hidelinks,unicode]{hyperref}
+\pagestyle{plain}
+\emergencystretch=2em
+\clubpenalty=10000
+\widowpenalty=10000
+
+% --------------------- ЗАПОЛНИТЕ ЭТИ ПОЛЯ ---------------------
+% Наименование организации воспроизведено из предоставленного образца.
+\newcommand{\University}{«САНКТ-ПЕТЕРБУРГСКИЙ НАЦИОНАЛЬНЫЙ
+ИССЛЕДОВАТЕЛЬСКИЙ УНИВЕРСИТЕТ ИНФОРМАЦИОННЫХ
+ТЕХНОЛОГИЙ, МЕХАНИКИ И ОПТИКИ»}
+\newcommand{\Faculty}{Факультет безопасности информационных технологий}
+\newcommand{\Discipline}{Название дисциплины}
+\newcommand{\LabNumber}{1}
+\newcommand{\LabTitle}{Название лабораторной работы}
+\newcommand{\Group}{Номер группы}
+\newcommand{\Student}{Фамилия Имя Отчество}
+\newcommand{\Teacher}{Фамилия Имя Отчество}
+\newcommand{\City}{Санкт-Петербург}
+\newcommand{\ReportYear}{2026}
+
+% Нумерация титульного листа учитывается, но номер не печатается.
+\newcommand{\LabSection}[1]{%
+  \ifNewSectionPage\clearpage\fi\section{#1}}
+\newcommand{\StructuralSection}[1]{%
+  \clearpage
+  \phantomsection\addcontentsline{toc}{section}{#1}%
+  {\centering\bfseries #1\par}%
+  \nobreak\vspace{\baselineskip}}
+
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\setstretch{1.0}
+\setlength{\parindent}{0pt}
+\begin{center}
+ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ
+ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ\par
+\University\par
+\vspace{10mm}
+\Faculty\par
+\vfill
+Дисциплина:\par
+«\Discipline»\par
+\vspace{12mm}
+\textbf{ОТЧЕТ ПО ЛАБОРАТОРНОЙ РАБОТЕ №\,\LabNumber}\par
+\LabTitle\par
+\vfill
+\end{center}
+\begin{flushright}
+\begin{minipage}{0.55\textwidth}
+\raggedleft
+Выполнил:\par
+Студент гр. \Group\par
+\Student\par
+Подпись: \rule{35mm}{0.4pt}\par
+\vspace{8mm}
+Проверил:\par
+\Teacher\par
+Подпись: \rule{35mm}{0.4pt}\par
+Отметка: \rule{35mm}{0.4pt}\par
+\end{minipage}
+\end{flushright}
+\vfill
+\begin{center}
+\City\par
+\ReportYear\,г.
+\end{center}
+\end{titlepage}
+\setcounter{page}{2}
+
+% Содержание включайте, если оно требуется преподавателем:
+% \renewcommand{\contentsname}{СОДЕРЖАНИЕ}
+% \tableofcontents
+
+\LabSection{Цель работы}
+Сформулируйте цель работы: какой метод нужно изучить, какую зависимость
+исследовать или какой практический навык получить.
+
+Укажите исходные данные, номер варианта и поставленные задачи.
+
+\LabSection{Ход работы}
+\subsection{Оборудование и исходные данные}
+Перечислите оборудование, программное обеспечение с версиями и параметры
+эксперимента, необходимые для повторения работы.
+
+\subsection{Выполнение и результаты}
+Опишите выполненные действия и полученные результаты. Пример оформления
+таблицы приведён в таблице~\ref{tab:results}. Замените демонстрационные
+значения собственными данными.
+
+\begin{table}[htbp]
+\caption{Результаты измерений}\label{tab:results}
+\centering
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{22mm}|*{2}{>{\centering\arraybackslash}X|}}
+\hline
+Номер опыта & Напряжение $U$, В & Сила тока $I$, А \\ \hline
+1 & 2,0 & 0,10 \\ \hline
+2 & 4,0 & 0,20 \\ \hline
+\end{tabularx}
+\end{table}
+\par\vspace{\baselineskip}
+
+Расчёт сопротивления выполняется по формуле~\eqref{eq:resistance}:
+\begin{equation}
+R=\frac{U}{I},\label{eq:resistance}
+\end{equation}
+\noindent где $R$ — сопротивление, Ом; $U$ — напряжение, В;
+$I$ — сила тока, А.
+
+Пример размещения иллюстрации показан на рисунке~\ref{fig:example}.
+\begin{figure}[htbp]
+\centering
+% Замените рамку командой: \includegraphics[width=0.8\textwidth]{image.png}
+\fbox{\parbox[c][25mm][c]{0.75\textwidth}{\centering Место для рисунка}}
+\caption{Название иллюстрации}\label{fig:example}
+\end{figure}
+
+\StructuralSection{ЗАКЛЮЧЕНИЕ}
+Сформулируйте выводы по результатам работы. Укажите, достигнута ли цель,
+какие значения и зависимости получены, чем объясняются отклонения
+и какие ограничения есть у использованного метода.
+
+% Если использованы внешние материалы, добавьте список и ссылки [1] в тексте:
+% \StructuralSection{СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ}
+% \begin{enumerate}[label=\arabic*.]
+% \item Автор. Название. — Город: Издательство, год. — Число страниц.
+% \item Название ресурса. — URL: \url{https://example.org}
+% (дата обращения: ДД.ММ.ГГГГ).
+% \end{enumerate}
+
+% При необходимости добавьте приложение с новой страницы:
+% \StructuralSection{ПРИЛОЖЕНИЕ А}
+% \begin{center}Дополнительные материалы\end{center}
+% Здесь размещаются исходные данные, листинги или большие таблицы.
+\end{document}
